@@ -1,0 +1,304 @@
+{
+  "info": {
+    "_postman_id": "03816ba7-3135-44cb-ac8a-f8de4af87816",
+    "name": "Prueba Seguros Bolívar API",
+    "description": "Colección de pruebas para la API de gestión de clientes y pólizas de seguros.",
+    "schema": "https://schema.getpostman.com/json/collection/v2.1.0/collection.json"
+  },
+  "item": [
+    {
+      "name": "Clientes",
+      "item": [
+        {
+          "name": "Crear Cliente",
+          "request": {
+            "method": "POST",
+            "header": [
+              {
+                "key": "Content-Type",
+                "value": "application/json"
+              }
+            ],
+            "body": {
+              "mode": "raw",
+              "raw": "{\n  \"tipoDocumento\": \"CC\",\n  \"numeroDocumento\": \"1234567890\",\n  \"nombres\": \"Juan\",\n  \"apellidos\": \"Perez\",\n  \"email\": \"juan.perez@test.com\",\n  \"telefono\": \"3001234567\",\n  \"fechaNacimiento\": \"1990-01-01\"\n}"
+            },
+            "url": {
+              "raw": "http://localhost:8080/api/v1/clientes",
+              "protocol": "http",
+              "host": [
+                "localhost"
+              ],
+              "port": "8080",
+              "path": [
+                "api",
+                "v1",
+                "clientes"
+              ]
+            }
+          },
+          "response": []
+        },
+        {
+          "name": "Listar Clientes",
+          "request": {
+            "method": "GET",
+            "header": [],
+            "url": {
+              "raw": "http://localhost:8080/api/v1/clientes",
+              "protocol": "http",
+              "host": [
+                "localhost"
+              ],
+              "port": "8080",
+              "path": [
+                "api",
+                "v1",
+                "clientes"
+              ]
+            }
+          },
+          "response": []
+        },
+        {
+          "name": "Obtener Cliente por ID",
+          "request": {
+            "method": "GET",
+            "header": [],
+            "url": {
+              "raw": "http://localhost:8080/api/v1/clientes/1",
+              "protocol": "http",
+              "host": [
+                "localhost"
+              ],
+              "port": "8080",
+              "path": [
+                "api",
+                "v1",
+                "clientes",
+                "1"
+              ]
+            }
+          },
+          "response": []
+        },
+        {
+          "name": "Actualizar Cliente",
+          "request": {
+            "method": "PUT",
+            "header": [
+              {
+                "key": "Content-Type",
+                "value": "application/json"
+              }
+            ],
+            "body": {
+              "mode": "raw",
+              "raw": "{\n  \"tipoDocumento\": \"CC\",\n  \"numeroDocumento\": \"1234567890\",\n  \"nombres\": \"Juan Actualizado\",\n  \"apellidos\": \"Perez\",\n  \"email\": \"juan.perez@test.com\",\n  \"telefono\": \"3000000000\",\n  \"fechaNacimiento\": \"1990-01-01\"\n}"
+            },
+            "url": {
+              "raw": "http://localhost:8080/api/v1/clientes/1",
+              "protocol": "http",
+              "host": [
+                "localhost"
+              ],
+              "port": "8080",
+              "path": [
+                "api",
+                "v1",
+                "clientes",
+                "1"
+              ]
+            }
+          },
+          "response": []
+        },
+        {
+          "name": "Eliminar Cliente",
+          "request": {
+            "method": "DELETE",
+            "header": [],
+            "url": {
+              "raw": "http://localhost:8080/api/v1/clientes/1",
+              "protocol": "http",
+              "host": [
+                "localhost"
+              ],
+              "port": "8080",
+              "path": [
+                "api",
+                "v1",
+                "clientes",
+                "1"
+              ]
+            }
+          },
+          "response": []
+        }
+      ]
+    },
+    {
+      "name": "Pólizas",
+      "item": [
+        {
+          "name": "Crear Póliza VIDA",
+          "request": {
+            "method": "POST",
+            "header": [
+              {
+                "key": "Content-Type",
+                "value": "application/json"
+              }
+            ],
+            "body": {
+              "mode": "raw",
+              "raw": "{\n  \"clienteId\": 1,\n  \"numeroPoliza\": \"POL-VIDA-001\",\n  \"fechaInicio\": \"2024-01-01\",\n  \"fechaFin\": \"2025-01-01\",\n  \"tipoPoliza\": \"VIDA\",\n  \"valorAsegurado\": 150000.00,\n  \"tarifaBase\": 100.00,\n  \"beneficiarios\": [\n    {\n      \"nombres\": \"Maria\",\n      \"apellidos\": \"Gomez\",\n      \"tipoDocumento\": \"CC\",\n      \"numeroDocumento\": \"987654321\",\n      \"parentesco\": \"MADRE\"\n    },\n    {\n      \"nombres\": \"Carlos\",\n      \"apellidos\": \"Perez\",\n      \"tipoDocumento\": \"TI\",\n      \"numeroDocumento\": \"1122334455\",\n      \"parentesco\": \"HIJO\"\n    }\n  ]\n}"
+            },
+            "url": {
+              "raw": "http://localhost:8080/api/v1/polizas",
+              "protocol": "http",
+              "host": [
+                "localhost"
+              ],
+              "port": "8080",
+              "path": [
+                "api",
+                "v1",
+                "polizas"
+              ]
+            }
+          },
+          "response": []
+        },
+        {
+          "name": "Crear Póliza SALUD",
+          "request": {
+            "method": "POST",
+            "header": [
+              {
+                "key": "Content-Type",
+                "value": "application/json"
+              }
+            ],
+            "body": {
+              "mode": "raw",
+              "raw": "{\n  \"clienteId\": 1,\n  \"numeroPoliza\": \"POL-SALUD-001\",\n  \"fechaInicio\": \"2024-01-01\",\n  \"fechaFin\": \"2025-01-01\",\n  \"tipoPoliza\": \"SALUD\",\n  \"coberturaSalud\": \"CLIENTE_Y_PADRES\",\n  \"valorAsegurado\": 50000.00,\n  \"tarifaBase\": 200.00,\n  \"beneficiarios\": [\n    {\n      \"nombres\": \"Maria\",\n      \"apellidos\": \"Gomez\",\n      \"tipoDocumento\": \"CC\",\n      \"numeroDocumento\": \"987654321\",\n      \"parentesco\": \"MADRE\"\n    },\n    {\n      \"nombres\": \"Jose\",\n      \"apellidos\": \"Perez\",\n      \"tipoDocumento\": \"CC\",\n      \"numeroDocumento\": \"55667788\",\n      \"parentesco\": \"PADRE\"\n    }\n  ]\n}"
+            },
+            "url": {
+              "raw": "http://localhost:8080/api/v1/polizas",
+              "protocol": "http",
+              "host": [
+                "localhost"
+              ],
+              "port": "8080",
+              "path": [
+                "api",
+                "v1",
+                "polizas"
+              ]
+            }
+          },
+          "response": []
+        },
+        {
+          "name": "Crear Póliza VEHICULO",
+          "request": {
+            "method": "POST",
+            "header": [
+              {
+                "key": "Content-Type",
+                "value": "application/json"
+              }
+            ],
+            "body": {
+              "mode": "raw",
+              "raw": "{\n  \"clienteId\": 1,\n  \"numeroPoliza\": \"POL-AUTO-001\",\n  \"fechaInicio\": \"2024-01-01\",\n  \"fechaFin\": \"2025-01-01\",\n  \"tipoPoliza\": \"VEHICULO\",\n  \"valorAsegurado\": 80000.00,\n  \"tarifaBase\": 300.00,\n  \"vehiculos\": [\n    {\n      \"placa\": \"ABC-123\",\n      \"marca\": \"Toyota\",\n      \"modelo\": \"Corolla\",\n      \"anio\": 2020\n    },\n    {\n      \"placa\": \"XYZ-987\",\n      \"marca\": \"Mazda\",\n      \"modelo\": \"3\",\n      \"anio\": 2022\n    }\n  ]\n}"
+            },
+            "url": {
+              "raw": "http://localhost:8080/api/v1/polizas",
+              "protocol": "http",
+              "host": [
+                "localhost"
+              ],
+              "port": "8080",
+              "path": [
+                "api",
+                "v1",
+                "polizas"
+              ]
+            }
+          },
+          "response": []
+        },
+        {
+          "name": "Listar Pólizas por Cliente",
+          "request": {
+            "method": "GET",
+            "header": [],
+            "url": {
+              "raw": "http://localhost:8080/api/v1/polizas/cliente/1",
+              "protocol": "http",
+              "host": [
+                "localhost"
+              ],
+              "port": "8080",
+              "path": [
+                "api",
+                "v1",
+                "polizas",
+                "cliente",
+                "1"
+              ]
+            }
+          },
+          "response": []
+        },
+        {
+          "name": "Consultar Detalle Póliza",
+          "request": {
+            "method": "GET",
+            "header": [],
+            "url": {
+              "raw": "http://localhost:8080/api/v1/polizas/1",
+              "protocol": "http",
+              "host": [
+                "localhost"
+              ],
+              "port": "8080",
+              "path": [
+                "api",
+                "v1",
+                "polizas",
+                "1"
+              ]
+            }
+          },
+          "response": []
+        },
+        {
+          "name": "Listar Beneficiarios de Salud",
+          "request": {
+            "method": "GET",
+            "header": [],
+            "url": {
+              "raw": "http://localhost:8080/api/v1/polizas/2/beneficiarios",
+              "protocol": "http",
+              "host": [
+                "localhost"
+              ],
+              "port": "8080",
+              "path": [
+                "api",
+                "v1",
+                "polizas",
+                "2",
+                "beneficiarios"
+              ]
+            }
+          },
+          "response": []
+        }
+      ]
+    }
+  ]
+}
