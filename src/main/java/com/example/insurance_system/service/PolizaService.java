@@ -22,6 +22,11 @@ import java.math.BigDecimal;
 import java.util.List;
 import java.util.stream.Collectors;
 
+/**
+ * Servicio encargado de gestionar la lógica de negocio para las pólizas de
+ * seguros.
+ * Evalúa las reglas específicas para pólizas de vida, salud y vehículos.
+ */
 @Service
 @RequiredArgsConstructor
 public class PolizaService {
@@ -30,6 +35,15 @@ public class PolizaService {
     private final ClienteRepository clienteRepository;
     private final BeneficiarioRepository beneficiarioRepository;
 
+    /**
+     * Crea una nueva póliza y la asocia a un cliente existente.
+     * Evalúa las reglas de negocio dependiendo del tipo de póliza proporcionado.
+     *
+     * @param dto El objeto DTO con la información de la póliza a crear.
+     * @return El DTO de la póliza creada y guardada en el sistema.
+     * @throws ApplicationException Si el cliente no existe o se incumplen reglas de
+     *                              negocio.
+     */
     @Transactional
     public PolizaDTO crearPoliza(PolizaDTO dto) {
         Cliente cliente = clienteRepository.findById(dto.getClienteId())
@@ -66,6 +80,13 @@ public class PolizaService {
         return mapToDTO(poliza);
     }
 
+    /**
+     * Lista todas las pólizas de un cliente determinado.
+     *
+     * @param clienteId El ID del cliente a consultar.
+     * @return Lista de DTOs con las pólizas del cliente.
+     * @throws ApplicationException Si el cliente no existe.
+     */
     @Transactional(readOnly = true)
     public List<PolizaDTO> listarPolizasPorCliente(Long clienteId) {
         if (!clienteRepository.existsById(clienteId)) {
@@ -76,6 +97,14 @@ public class PolizaService {
                 .collect(Collectors.toList());
     }
 
+    /**
+     * Consulta el detalle específico de una póliza, incluyendo sus listas asociadas
+     * (vehículos o beneficiarios).
+     *
+     * @param polizaId El ID de la póliza.
+     * @return El DTO de la póliza consultada.
+     * @throws ApplicationException Si la póliza no existe.
+     */
     @Transactional(readOnly = true)
     public PolizaDTO consultarDetallePoliza(Long polizaId) {
         Poliza poliza = polizaRepository.findById(polizaId)
@@ -83,6 +112,14 @@ public class PolizaService {
         return mapToDTO(poliza);
     }
 
+    /**
+     * Lista los beneficiarios asociados a una póliza en particular.
+     * Usado principalmente para pólizas de tipo Vida o Salud.
+     *
+     * @param polizaId El ID de la póliza.
+     * @return Lista de DTOs con los beneficiarios.
+     * @throws ApplicationException Si la póliza no existe.
+     */
     @Transactional(readOnly = true)
     public List<BeneficiarioDTO> listarBeneficiariosPorPoliza(Long polizaId) {
         Poliza poliza = polizaRepository.findById(polizaId)
@@ -93,6 +130,15 @@ public class PolizaService {
                 .collect(Collectors.toList());
     }
 
+    /**
+     * Valida las reglas de negocio específicas para pólizas de Vida.
+     * - Solo se permite una póliza de este tipo por cliente.
+     * - Solo se permiten hasta 2 beneficiarios.
+     *
+     * @param clienteId El ID del cliente.
+     * @param dto       El DTO con los datos de configuración de la póliza.
+     * @throws ApplicationException Si se viola alguna de las reglas.
+     */
     private void validarPolizaVida(Long clienteId, PolizaDTO dto) {
         if (polizaRepository.existsByClienteIdAndTipoPoliza(clienteId, TipoPoliza.VIDA)) {
             throw new ApplicationException("El cliente ya posee una póliza de VIDA. Solo puede existir 1 por cliente.",
@@ -104,6 +150,13 @@ public class PolizaService {
         }
     }
 
+    /**
+     * Valida las reglas de negocio específicas para pólizas de Salud.
+     * - Es requerido especificar un nivel de cobertura.
+     *
+     * @param dto El DTO con la configuración de la póliza.
+     * @throws ApplicationException Si se viola alguna de las reglas.
+     */
     private void validarPolizaSalud(PolizaDTO dto) {
         if (dto.getCoberturaSalud() == null) {
             throw new ApplicationException("Las pólizas de SALUD requieren especificar la cobertura_salud.",
@@ -113,6 +166,12 @@ public class PolizaService {
         // cobertura
     }
 
+    /**
+     * Calcula dinámicamente la tarifa final de una póliza de salud en base a la
+     * cantidad de beneficiarios.
+     *
+     * @param poliza La instancia de póliza cuyo precio se va a actualizar.
+     */
     private void calcularTarifaSalud(Poliza poliza) {
         if (poliza.getBeneficiarios() == null || poliza.getBeneficiarios().isEmpty())
             return;
@@ -127,6 +186,12 @@ public class PolizaService {
         poliza.setTarifaBase(tarifaFinal);
     }
 
+    /**
+     * Agrega una lista de DTOs de beneficiarios a la entidad Póliza.
+     *
+     * @param poliza Entidad destino.
+     * @param dtos   Lista de beneficiarios a convertir en entidades y agregar.
+     */
     private void agregarBeneficiarios(Poliza poliza, List<BeneficiarioDTO> dtos) {
         if (dtos != null) {
             for (BeneficiarioDTO bDto : dtos) {
@@ -142,6 +207,12 @@ public class PolizaService {
         }
     }
 
+    /**
+     * Agrega una lista de DTOs de vehículos a la entidad Póliza.
+     *
+     * @param poliza Entidad destino.
+     * @param dtos   Lista de vehículos a convertir en entidades y agregar.
+     */
     private void agregarVehiculos(Poliza poliza, List<VehiculoAseguradoDTO> dtos) {
         if (dtos != null) {
             for (VehiculoAseguradoDTO vDto : dtos) {
@@ -156,6 +227,12 @@ public class PolizaService {
         }
     }
 
+    /**
+     * Convierte una entidad Poliza en su equivalente de Transferencia de Datos.
+     *
+     * @param poliza Entidad de la persistencia.
+     * @return El objeto DTO para ser devuelto por la API.
+     */
     private PolizaDTO mapToDTO(Poliza poliza) {
         return PolizaDTO.builder()
                 .id(poliza.getId())
@@ -173,6 +250,12 @@ public class PolizaService {
                 .build();
     }
 
+    /**
+     * Convierte un Beneficiario en su DTO respectivo.
+     *
+     * @param b Entidad Beneficiario.
+     * @return El DTO de Beneficiario.
+     */
     private BeneficiarioDTO mapBeneficiarioToDTO(Beneficiario b) {
         return BeneficiarioDTO.builder()
                 .id(b.getId())
@@ -184,6 +267,12 @@ public class PolizaService {
                 .build();
     }
 
+    /**
+     * Convierte un VehiculoAsegurado en su DTO respectivo.
+     *
+     * @param v Entidad VehiculoAsegurado.
+     * @return El DTO de VehiculoAsegurado.
+     */
     private VehiculoAseguradoDTO mapVehiculoToDTO(VehiculoAsegurado v) {
         return VehiculoAseguradoDTO.builder()
                 .id(v.getId())

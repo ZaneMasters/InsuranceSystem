@@ -80,6 +80,18 @@ class ClienteControllerTest {
     }
 
     @Test
+    void actualizarCliente() throws Exception {
+        when(clienteService.actualizarCliente(eq(1L), any(ClienteDTO.class))).thenReturn(clienteDTO);
+
+        mockMvc.perform(put("/api/v1/clientes/{id}", 1L)
+                .contentType(MediaType.APPLICATION_JSON)
+                .content(objectMapper.writeValueAsString(clienteDTO)))
+                .andExpect(status().isOk())
+                .andExpect(jsonPath("$.id").value(1L))
+                .andExpect(jsonPath("$.nombres").value("Juan"));
+    }
+
+    @Test
     void eliminarCliente() throws Exception {
         doNothing().when(clienteService).eliminarCliente(1L);
 

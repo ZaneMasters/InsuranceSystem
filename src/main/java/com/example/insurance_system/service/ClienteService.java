@@ -12,12 +12,25 @@ import org.springframework.transaction.annotation.Transactional;
 import java.util.List;
 import java.util.stream.Collectors;
 
+/**
+ * Servicio encargado de gestionar la lógica de negocio para los clientes.
+ * Proporciona métodos para registrar, consultar, actualizar y eliminar
+ * clientes.
+ */
 @Service
 @RequiredArgsConstructor
 public class ClienteService {
 
     private final ClienteRepository clienteRepository;
 
+    /**
+     * Crea un nuevo cliente en el sistema.
+     * Verifica que el número de documento no esté registrado previamente.
+     *
+     * @param dto El objeto DTO con la información del cliente.
+     * @return El DTO del cliente recién creado.
+     * @throws ApplicationException Si el número de documento ya existe.
+     */
     @Transactional
     public ClienteDTO crearCliente(ClienteDTO dto) {
         if (clienteRepository.findByNumeroDocumento(dto.getNumeroDocumento()).isPresent()) {
@@ -29,6 +42,14 @@ public class ClienteService {
         return mapToDTO(cliente);
     }
 
+    /**
+     * Obtiene los detalles de un cliente específico por su ID.
+     *
+     * @param id Identificador único del cliente.
+     * @return El objeto DTO con la información del cliente.
+     * @throws ApplicationException Si no se encuentra un cliente con el ID
+     *                              proporcionado.
+     */
     @Transactional(readOnly = true)
     public ClienteDTO obtenerCliente(Long id) {
         Cliente cliente = clienteRepository.findById(id)
@@ -36,6 +57,11 @@ public class ClienteService {
         return mapToDTO(cliente);
     }
 
+    /**
+     * Recupera una lista de todos los clientes registrados.
+     *
+     * @return Lista de objetos DTO de clientes.
+     */
     @Transactional(readOnly = true)
     public List<ClienteDTO> listarClientes() {
         return clienteRepository.findAll().stream()
@@ -43,6 +69,17 @@ public class ClienteService {
                 .collect(Collectors.toList());
     }
 
+    /**
+     * Actualiza la información de un cliente existente.
+     * Valida que el nuevo número de documento, en caso de haber cambiado, no
+     * pertenezca a otro cliente.
+     *
+     * @param id  Identificador único del cliente a actualizar.
+     * @param dto DTO con los datos actualizados del cliente.
+     * @return El objeto DTO del cliente actualizado.
+     * @throws ApplicationException Si el cliente no existe o el nuevo documento ya
+     *                              está en uso.
+     */
     @Transactional
     public ClienteDTO actualizarCliente(Long id, ClienteDTO dto) {
         Cliente cliente = clienteRepository.findById(id)
@@ -68,6 +105,12 @@ public class ClienteService {
         return mapToDTO(cliente);
     }
 
+    /**
+     * Elimina a un cliente del sistema dado su ID.
+     *
+     * @param id Identificador único del cliente a eliminar.
+     * @throws ApplicationException Si el cliente no existe.
+     */
     @Transactional
     public void eliminarCliente(Long id) {
         Cliente cliente = clienteRepository.findById(id)
@@ -75,7 +118,12 @@ public class ClienteService {
         clienteRepository.delete(cliente);
     }
 
-    // Mappers
+    /**
+     * Convierte un objeto ClienteDTO a la entidad Cliente.
+     *
+     * @param dto El objeto de transferencia de datos.
+     * @return La entidad Cliente lista para ser persistida.
+     */
     private Cliente mapToEntity(ClienteDTO dto) {
         return Cliente.builder()
                 .tipoDocumento(dto.getTipoDocumento())
@@ -88,6 +136,12 @@ public class ClienteService {
                 .build();
     }
 
+    /**
+     * Convierte una entidad Cliente a su respectivo ClienteDTO.
+     *
+     * @param cliente La entidad de modelo.
+     * @return El objeto DTO a exponer mediante la capa de servicios.
+     */
     public ClienteDTO mapToDTO(Cliente cliente) {
         return ClienteDTO.builder()
                 .id(cliente.getId())

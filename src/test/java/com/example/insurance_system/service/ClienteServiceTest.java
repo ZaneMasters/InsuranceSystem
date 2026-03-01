@@ -88,6 +88,13 @@ class ClienteServiceTest {
     }
 
     @Test
+    void obtenerCliente_FallaPorNoEncontrado() {
+        when(clienteRepository.findById(1L)).thenReturn(Optional.empty());
+
+        assertThrows(ApplicationException.class, () -> clienteService.obtenerCliente(1L));
+    }
+
+    @Test
     void listarClientes_Exitoso() {
         when(clienteRepository.findAll()).thenReturn(Arrays.asList(cliente1));
 
@@ -98,11 +105,48 @@ class ClienteServiceTest {
     }
 
     @Test
+    void actualizarCliente_Exitoso() {
+        when(clienteRepository.findById(1L)).thenReturn(Optional.of(cliente1));
+
+        ClienteDTO requestActualizado = ClienteDTO.builder()
+                .nombres("Pedro")
+                .apellidos("Gomez")
+                .email("pedro@test.com")
+                .telefono("3007654321")
+                .build();
+
+        when(clienteRepository.save(any(Cliente.class))).thenAnswer(invocation -> invocation.getArgument(0));
+
+        ClienteDTO result = clienteService.actualizarCliente(1L, requestActualizado);
+
+        assertNotNull(result);
+        assertEquals("Pedro", result.getNombres());
+        assertEquals("Gomez", result.getApellidos());
+    }
+
+    @Test
+    void actualizarCliente_FallaPorNoEncontrado() {
+        when(clienteRepository.findById(1L)).thenReturn(Optional.empty());
+
+        ClienteDTO requestActualizado = ClienteDTO.builder().build();
+
+        assertThrows(ApplicationException.class, () -> clienteService.actualizarCliente(1L, requestActualizado));
+    }
+
+    @Test
     void eliminarCliente_Exitoso() {
         when(clienteRepository.findById(1L)).thenReturn(Optional.of(cliente1));
         doNothing().when(clienteRepository).delete(cliente1);
 
         assertDoesNotThrow(() -> clienteService.eliminarCliente(1L));
         verify(clienteRepository).delete(cliente1);
+    }
+
+    @Test
+    void eliminarCliente_FallaPorNoEncontrado() {
+        when(clienteRepository.findById(1L)).thenReturn(Optional.empty());
+
+        assertThrows(ApplicationException.class, () -> clienteService.eliminarCliente(1L));
+        verify(clienteRepository, never()).delete(any(Cliente.class));
     }
 }
