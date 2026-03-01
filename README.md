@@ -19,11 +19,13 @@ La persistencia se realiza mediante **PostgreSQL** y **Spring Data JPA**.
 ### Entidades
 
 **Cliente**:
+
 * `id` (PK, Autogenerado)
 * `tipoDocumento`, `numeroDocumento` (Unique)
 * `nombres`, `apellidos`, `email`, `telefono`, `fechaNacimiento`
 
 **Poliza**:
+
 * `id` (PK)
 * `numeroPoliza` (Unique)
 * `fechaInicio`, `fechaFin`
@@ -33,11 +35,13 @@ La persistencia se realiza mediante **PostgreSQL** y **Spring Data JPA**.
 * `cliente_id` (FK a Cliente)
 
 **Beneficiario** (Vida y Salud):
+
 * `id` (PK)
 * `nombres`, `apellidos`, `tipoDocumento`, `numeroDocumento`, `parentesco`
 * `poliza_id` (FK a Poliza)
 
 **VehiculoAsegurado** (Vehículo):
+
 * `id` (PK)
 * `placa`, `marca`, `modelo`, `anio`
 * `poliza_id` (FK a Poliza)
@@ -51,6 +55,8 @@ La persistencia se realiza mediante **PostgreSQL** y **Spring Data JPA**.
 
 ### Cómo Correr la Aplicación Localmente
 
+#### Usando Maven
+
 1. Crear una base de datos en PostgreSQL llamada `insurance_db`.
 2. Actualizar las credenciales de la base de datos dentro del archivo `src/main/resources/application.yml` (por defecto `myuser`/`mypassword`).
 3. Ejecutar el proyecto mediante Maven:
@@ -59,9 +65,22 @@ La persistencia se realiza mediante **PostgreSQL** y **Spring Data JPA**.
    ./mvnw spring-boot:run
    ```
 
-4. Acceder a Swagger UI (Documentación Interactiva):
-   [http://localhost:8080/swagger-ui.html](http://localhost:8080/swagger-ui.html)
-5. Para ejecutar pruebas unitarias (con un mínimo de 80% de cobertura en Controller y Service):
+#### Usando Docker
+
+También es posible correr la aplicación y la base de datos utilizando Docker y Docker Compose:
+
+```bash
+docker-compose up -d --build
+```
+
+### Documentación de la API
+
+* Acceder a Swagger UI (Documentación Interactiva):
+  [http://localhost:8080/swagger-ui.html](http://localhost:8080/swagger-ui.html)
+
+### Pruebas Unitarias y Cobertura
+
+Para ejecutar pruebas unitarias. Actualmente las pruebas unitarias pasan el 80% de cobertura en el proyecto:
 
    ```bash
    ./mvnw clean test
